@@ -1,4 +1,4 @@
-package com.wargaku
+package com.barberonemobile
 
 import android.app.Application
 import com.facebook.react.PackageList

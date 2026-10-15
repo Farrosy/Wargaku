@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "WargaKu.app"
-               BlueprintName = "WargaKu"
-               ReferencedContainer = "container:WargaKu.xcodeproj">
+               BuildableName = "BarberOneMobile.app"
+               BlueprintName = "BarberOneMobile"
+               ReferencedContainer = "container:BarberOneMobile.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "WargaKuTests.xctest"
-               BlueprintName = "WargaKuTests"
-               ReferencedContainer = "container:WargaKu.xcodeproj">
+               BuildableName = "BarberOneMobileTests.xctest"
+               BlueprintName = "BarberOneMobileTests"
+               ReferencedContainer = "container:BarberOneMobile.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "WargaKu.app"
-            BlueprintName = "WargaKu"
-            ReferencedContainer = "container:WargaKu.xcodeproj">
+            BuildableName = "BarberOneMobile.app"
+            BlueprintName = "BarberOneMobile"
+            ReferencedContainer = "container:BarberOneMobile.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "WargaKu.app"
-            BlueprintName = "WargaKu"
-            ReferencedContainer = "container:WargaKu.xcodeproj">
+            BuildableName = "BarberOneMobile.app"
+            BlueprintName = "BarberOneMobile"
+            ReferencedContainer = "container:BarberOneMobile.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
