@@ -1,45 +1,27 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, {useState} from 'react';
+import {StatusBar} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {DashboardScreen} from './src/screens/DashboardScreen';
+import {LoginScreen} from './src/screens/LoginScreen';
+import {RegisterScreen} from './src/screens/RegisterScreen';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+type Screen = 'login' | 'register' | 'dashboard';
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [screen, setScreen] = useState<Screen>('login');
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <StatusBar barStyle="dark-content" />
+      {screen === 'login' && (
+        <LoginScreen onLogin={() => setScreen('dashboard')} onRegister={() => setScreen('register')} />
+      )}
+      {screen === 'register' && (
+        <RegisterScreen onRegister={() => setScreen('dashboard')} onLogin={() => setScreen('login')} />
+      )}
+      {screen === 'dashboard' && <DashboardScreen />}
     </SafeAreaProvider>
   );
 }
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default App;
