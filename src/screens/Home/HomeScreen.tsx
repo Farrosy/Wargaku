@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import {BottomNavbar, PageName} from '../../components/BottomNavbar/BottomNavbar';
+import {styles} from './style';
 import {ProfileScreen} from '../Profile/ProfileScreen';
 import {ReservationsScreen} from '../Reservations/ReservationsScreen';
 import {TicketsScreen} from '../Tickets/TicketsScreen';
@@ -26,11 +27,3 @@ export function HomeScreen({onLogout}: {onLogout: () => void}) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  page: {backgroundColor: '#f7f7f5', flex: 1},
-  content: {flex: 1, justifyContent: 'center', padding: 24},
-  brand: {color: '#8b6b43', fontSize: 13, fontWeight: '800', letterSpacing: 2, marginBottom: 16},
-  title: {color: '#20201d', fontSize: 30, fontWeight: '800'},
-  subtitle: {color: '#777770', fontSize: 15, marginTop: 8},
-});
