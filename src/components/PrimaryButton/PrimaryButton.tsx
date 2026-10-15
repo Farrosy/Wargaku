@@ -1,5 +1,6 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text} from 'react-native';
+import {Pressable, Text} from 'react-native';
+import {styles} from './style';
 
 export function PrimaryButton({title, onPress}: {title: string; onPress: () => void}) {
   return (
@@ -8,8 +9,3 @@ export function PrimaryButton({title, onPress}: {title: string; onPress: () => v
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {alignItems: 'center', backgroundColor: '#252522', borderRadius: 12, marginTop: 8, padding: 16},
-  text: {color: '#fff', fontSize: 16, fontWeight: '700'},
-});

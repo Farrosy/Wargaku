@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {KeyboardAvoidingView, Platform, ScrollView, Text} from 'react-native';
-import {AuthInput} from '../components/AuthInput';
-import {PrimaryButton} from '../components/PrimaryButton';
-import {styles} from './RegisterScreen.styles';
+import {AuthInput} from '../../components/AuthInput/AuthInput';
+import {PrimaryButton} from '../../components/PrimaryButton/PrimaryButton';
+import {styles} from './style';
 
 type Props = {onRegister: () => void; onLogin: () => void};
 
@@ -16,7 +16,7 @@ export function RegisterScreen({onRegister, onLogin}: Props) {
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.brand}>BARBER ONE</Text>
         <Text style={styles.title}>Buat akun</Text>
-        <Text style={styles.subtitle}>Daftar untuk mulai menggunakan Barber One.</Text>
+        <Text style={styles.registerSubtitle}>Daftar untuk mulai menggunakan Barber One.</Text>
         <AuthInput label="Nama lengkap" placeholder="Nama Anda" autoCapitalize="words" value={name} onChangeText={setName} />
         <AuthInput label="Email" placeholder="nama@email.com" keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={setEmail} />
         <AuthInput label="Kata sandi" placeholder="Buat kata sandi" secureTextEntry value={password} onChangeText={setPassword} />
@@ -26,4 +26,3 @@ export function RegisterScreen({onRegister, onLogin}: Props) {
     </KeyboardAvoidingView>
   );
 }
-

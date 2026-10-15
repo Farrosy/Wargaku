@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {StatusBar} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {DashboardScreen} from './src/screens/DashboardScreen';
-import {LoginScreen} from './src/screens/LoginScreen';
-import {RegisterScreen} from './src/screens/RegisterScreen';
+import {DashboardScreen} from './src/screens/Dashboard/DashboardScreen';
+import {LoginScreen} from './src/screens/Auth/LoginScreen';
+import {RegisterScreen} from './src/screens/Auth/RegisterScreen';
 
 type Screen = 'login' | 'register' | 'dashboard';
 
