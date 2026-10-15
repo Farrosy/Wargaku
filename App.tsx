@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {StatusBar} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {DashboardScreen} from './src/screens/Dashboard/DashboardScreen';
+import {HomeScreen} from './src/screens/Home/HomeScreen';
 import {LoginScreen} from './src/screens/Auth/LoginScreen';
 import {RegisterScreen} from './src/screens/Auth/RegisterScreen';
 
-type Screen = 'login' | 'register' | 'dashboard';
+type Screen = 'login' | 'register' | 'home';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('login');
@@ -14,12 +14,12 @@ function App() {
     <SafeAreaProvider>
       <StatusBar barStyle="dark-content" />
       {screen === 'login' && (
-        <LoginScreen onLogin={() => setScreen('dashboard')} onRegister={() => setScreen('register')} />
+        <LoginScreen onLogin={() => setScreen('home')} onRegister={() => setScreen('register')} />
       )}
       {screen === 'register' && (
-        <RegisterScreen onRegister={() => setScreen('dashboard')} onLogin={() => setScreen('login')} />
+        <RegisterScreen onRegister={() => setScreen('home')} onLogin={() => setScreen('login')} />
       )}
-      {screen === 'dashboard' && <DashboardScreen />}
+      {screen === 'home' && <HomeScreen onLogout={() => setScreen('login')} />}
     </SafeAreaProvider>
   );
 }
