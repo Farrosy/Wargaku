@@ -74,7 +74,9 @@ export function ReservationsScreen({token, user}: {token: string; user: AuthUser
 
   const service = services.find(item => item.id === serviceId);
   const barber = barbers.find(item => item.id === barberId);
-  const dateLabel = dates.find(item => item.value === date)?.number || date;
+  const dateLabel = new Date(`${date}T12:00:00`).toLocaleDateString('id-ID', {
+    weekday: 'short', day: 'numeric', month: 'short',
+  });
 
   const submit = async () => {
     if (!service || !barber || !time) {
