@@ -5,8 +5,9 @@ import {styles} from './style';
 import {ProfileScreen} from '../Profile/ProfileScreen';
 import {ReservationsScreen} from '../Reservations/ReservationsScreen';
 import {TicketsScreen} from '../Tickets/TicketsScreen';
+import {AuthUser} from '../../services/auth';
 
-export function HomeScreen({onLogout}: {onLogout: () => void}) {
+export function HomeScreen({onLogout, token, user}: {onLogout: () => void; token: string; user: AuthUser}) {
   const [activePage, setActivePage] = useState<PageName>('Beranda');
 
   return (
@@ -19,7 +20,7 @@ export function HomeScreen({onLogout}: {onLogout: () => void}) {
             <Text style={styles.subtitle}>Senang melihat Anda kembali.</Text>
           </View>
         )}
-        {activePage === 'Reservasi' && <ReservationsScreen />}
+        {activePage === 'Reservasi' && <ReservationsScreen token={token} user={user} />}
         {activePage === 'Tiket Saya' && <TicketsScreen />}
         {activePage === 'Profil' && <ProfileScreen onLogout={onLogout} />}
       </View>

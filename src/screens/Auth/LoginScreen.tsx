@@ -3,9 +3,9 @@ import {Alert, KeyboardAvoidingView, Linking, Platform, ScrollView, Text, View} 
 import {AuthInput} from '../../components/AuthInput/AuthInput';
 import {PrimaryButton} from '../../components/PrimaryButton/PrimaryButton';
 import {styles} from './style';
-import {login} from '../../services/auth';
+import {AuthUser, login} from '../../services/auth';
 
-type Props = {onLogin: () => void; onRegister: () => void};
+type Props = {onLogin: (token: string, user: AuthUser) => void; onRegister: () => void};
 
 export function LoginScreen({onLogin, onRegister}: Props) {
   const [email, setEmail] = useState('');
@@ -27,7 +27,7 @@ export function LoginScreen({onLogin, onRegister}: Props) {
         ]);
         return;
       }
-      onLogin();
+      onLogin(result.access_token, result.user);
     } catch (error) {
       Alert.alert('Login gagal', error instanceof Error ? error.message : 'Terjadi kesalahan. Silakan coba lagi.');
     } finally {

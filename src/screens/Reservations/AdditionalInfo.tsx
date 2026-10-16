@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { styles } from './style';
 
-export function AdditionalInfo() {
+export function AdditionalInfo({notes, onChangeNotes}: {notes: string; onChangeNotes: (value: string) => void}) {
   return (
     <View>
       {/* Catatan Khusus */}
@@ -16,11 +16,14 @@ export function AdditionalInfo() {
           placeholderTextColor="#85847c"
           multiline={true}
           numberOfLines={3}
+          maxLength={150}
+          value={notes}
+          onChangeText={onChangeNotes}
         />
         
         <View style={styles.notesFooter}>
           <Text style={styles.notesFooterText}>🌿 Konsultasi gratis saat kedatangan</Text>
-          <Text style={styles.notesCharCount}>Maks 150 kar</Text>
+          <Text style={styles.notesCharCount}>{notes.length}/150 kar</Text>
         </View>
       </View>
 
