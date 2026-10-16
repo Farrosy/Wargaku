@@ -17,7 +17,7 @@ function App() {
         <LoginScreen onLogin={() => setScreen('home')} onRegister={() => setScreen('register')} />
       )}
       {screen === 'register' && (
-        <RegisterScreen onRegister={() => setScreen('home')} onLogin={() => setScreen('login')} />
+        <RegisterScreen onRegister={() => setScreen('login')} onLogin={() => setScreen('login')} />
       )}
       {screen === 'home' && <HomeScreen onLogout={() => setScreen('login')} />}
     </SafeAreaProvider>
