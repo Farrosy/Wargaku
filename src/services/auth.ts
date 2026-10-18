@@ -1,8 +1,6 @@
-import {Platform} from 'react-native';
-
-// Android emulator reaches the host machine through 10.0.2.2.
-// For a physical device, replace this with the development machine's LAN IP.
-const API_BASE_URL = Platform.OS === 'android' ? 'http://10.0.2.2:3000/api' : 'http://localhost:3000/api';
+// API base URL dimuat dari .env (via react-native-dotenv).
+// Contoh isi .env saat lokal: API_BASE_URL=http://10.0.2.2:3000/api
+import {API_BASE_URL} from '@env';
 
 type ApiResponse<T> = T & {message?: string; error?: string};
 export type AuthUser = {id: number; name: string; phone: string; email?: string | null; role: string};
@@ -37,7 +35,7 @@ export function register(input: {name: string; phone: string; email?: string; pa
 
 export type Service = {id: number; name: string; description?: string | null; price: number; duration_minutes: number};
 export type Barber = {id: number; name: string; rating: number; available: boolean};
-export type BookingResult = {message: string; booking: {id: number; ticket_code: string; status: string}};
+export type BookingResult = {message: string; booking: {id: number; ticket_code: string; status: string; payment_redirect_url?: string; payment_status?: string}};
 
 async function request<T>(path: string, token?: string, payload?: object): Promise<T> {
   let response: Response;

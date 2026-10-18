@@ -28,7 +28,7 @@ function makeDateOptions(): BookingDateOption[] {
   });
 }
 
-export function ReservationsScreen({token, user}: {token: string; user: AuthUser}) {
+export function ReservationsScreen({token, user, onPayment}: {token: string; user: AuthUser; onPayment?: (url: string, ticketCode: string) => void}) {
   const dates = useMemo(makeDateOptions, []);
   const [services, setServices] = useState<Service[]>([]);
   const [barbers, setBarbers] = useState<Barber[]>([]);
@@ -94,6 +94,11 @@ export function ReservationsScreen({token, user}: {token: string; user: AuthUser
         booking_time: time,
         notes,
       });
+      if (onPayment && result.booking.payment_redirect_url) {
+        // Redirect ke layar pembayaran (Midtrans) via WebView.
+        onPayment(result.booking.payment_redirect_url, result.booking.ticket_code);
+        return;
+      }
       Alert.alert('Reservasi berhasil', `Kode tiket: ${result.booking.ticket_code}\nStatus: ${result.booking.status}`);
       setNotes('');
       setTime('');
