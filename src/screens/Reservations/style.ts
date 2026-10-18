@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: '#f9f9f7' },
   scrollArea: { flex: 1 },
-  scrollContent: { padding: 16, paddingBottom: 110, marginTop: 10 },
+  scrollContent: { paddingHorizontal: 12, paddingTop: 20, paddingBottom: 110 },
   
   flexOne: { flex: 1 },
   alignRight: { alignItems: 'flex-end' },

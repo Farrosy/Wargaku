@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import {Alert, Text, View} from 'react-native';
+import {Alert, StyleSheet, View} from 'react-native';
 import {BottomNavbar, PageName} from '../../components/BottomNavbar/BottomNavbar';
-import {styles} from './style';
+import {HomeContent} from './HomeContent';
 import {ProfileScreen} from '../Profile/ProfileScreen';
 import {ReservationsScreen} from '../Reservations/ReservationsScreen';
 import {TicketsScreen} from '../Tickets/TicketsScreen';
@@ -41,13 +41,7 @@ export function HomeScreen({onLogout, token, user}: {onLogout: () => void; token
   return (
     <View style={styles.page}>
       <View style={styles.content}>
-        {activePage === 'Beranda' && (
-          <View>
-            <Text style={styles.brand}>BARBER ONE</Text>
-            <Text style={styles.title}>Selamat datang!</Text>
-            <Text style={styles.subtitle}>Senang melihat Anda kembali.</Text>
-          </View>
-        )}
+        {activePage === 'Beranda' && <HomeContent user={user} onNavigate={setActivePage} />}
         {activePage === 'Reservasi' && (
           <ReservationsScreen
             token={token}
@@ -62,3 +56,8 @@ export function HomeScreen({onLogout, token, user}: {onLogout: () => void; token
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  page: {backgroundColor: '#f7f7f5', flex: 1},
+  content: {flex: 1, justifyContent: 'center', paddingVertical: 20},
+});
