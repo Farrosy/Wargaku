@@ -1,5 +1,5 @@
 import React from 'react';
-import {ImageBackground, Pressable, Text, View} from 'react-native';
+import {ImageBackground, Text, View} from 'react-native';
 import {styles} from './style';
 
 const HERO_IMAGE =
@@ -7,11 +7,10 @@ const HERO_IMAGE =
 
 type Props = {
   barberCount: number;
-  onBooking: () => void;
 };
 
-// Banner hero dengan overlay gelap dan tombol "Booking Sekarang".
-export function HeroBanner({barberCount, onBooking}: Props) {
+// Banner hero dengan overlay gelap.
+export function HeroBanner({barberCount}: Props) {
   return (
     <View style={styles.heroCard}>
       <ImageBackground source={{uri: HERO_IMAGE}} style={styles.heroImage} resizeMode="cover" />
@@ -20,13 +19,7 @@ export function HeroBanner({barberCount, onBooking}: Props) {
       <View style={styles.heroContent}>
         <Text style={styles.heroEyebrow}>Edisi Eksklusif</Text>
         <Text style={styles.heroTitle}>Craftsmanship & Presisi Tanpa Kompromi</Text>
-        <View style={styles.heroFooter}>
-          <Text style={styles.heroMeta}>{barberCount} Master Barber Bertugas</Text>
-          <Pressable onPress={onBooking} style={styles.heroButton} accessibilityRole="button">
-            <Text style={styles.heroButtonText}>Booking Sekarang</Text>
-            <Text style={styles.heroButtonArrow}>→</Text>
-          </Pressable>
-        </View>
+        <Text style={styles.heroMeta}>{barberCount} Master Barber Bertugas</Text>
       </View>
     </View>
   );

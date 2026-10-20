@@ -106,7 +106,7 @@ export function HomeContent({user, onNavigate}: Props) {
         <ActivityIndicator color="#7b5821" style={styles.loadingSpinner} />
       ) : (
         <>
-          <HeroBanner barberCount={barbers.length} onBooking={goReserve} />
+          <HeroBanner barberCount={barbers.length} />
 
           <QueueStatusCard barbers={barbers} />
 
