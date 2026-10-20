@@ -1,10 +1,21 @@
 import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
-  page: {flex: 1, justifyContent: 'center', paddingVertical: 20, paddingHorizontal: 12},
+  page: {flex: 1, backgroundColor: '#f9f9f7'},
+  content: {flexGrow: 1, justifyContent: 'center', paddingVertical: 24, paddingHorizontal: 16},
   eyebrow: {color: '#8b6b43', fontSize: 13, fontWeight: '800', letterSpacing: 2, marginBottom: 16},
   title: {color: '#20201d', fontSize: 30, fontWeight: '800'},
   description: {color: '#777770', fontSize: 15, lineHeight: 22, marginTop: 8},
+  profileCard: {backgroundColor: '#ffffff', borderColor: '#eae7e1', borderRadius: 14, borderWidth: 1, marginTop: 24, paddingHorizontal: 16, paddingTop: 16},
+  cardHeading: {alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4},
+  cardTitle: {color: '#20201d', fontSize: 16, fontWeight: '800'},
+  profileField: {borderBottomColor: '#eeece8', borderBottomWidth: 1, paddingVertical: 14},
+  profileFieldLast: {borderBottomWidth: 0},
+  fieldLabel: {color: '#8b6b43', fontSize: 10, fontWeight: '800', letterSpacing: 0.9, marginBottom: 5},
+  fieldValue: {color: '#20201d', fontSize: 14, fontWeight: '600'},
+  errorBox: {backgroundColor: '#fae9e7', borderRadius: 8, marginBottom: 12, padding: 10},
+  errorText: {color: '#a12b22', fontSize: 12, lineHeight: 17},
+  retryText: {color: '#8b6b43', fontSize: 12, fontWeight: '800', marginTop: 7},
   logoutButton: {
     alignItems: 'center',
     alignSelf: 'flex-start',
@@ -14,5 +25,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingVertical: 13,
   },
+  logoutButtonDisabled: {opacity: 0.65},
   logoutText: {color: '#ffffff', fontSize: 15, fontWeight: '700'},
 });

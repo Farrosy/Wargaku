@@ -68,11 +68,18 @@ export type MyTickets = {
   history: TicketBooking[];
 };
 
-async function request<T>(path: string, token?: string, payload?: object): Promise<T> {
+export type BookingDetail = TicketBooking & {
+  customer_name: string;
+  customer_phone: string;
+  service_id: number;
+  barber_id: number;
+};
+
+async function request<T>(path: string, token?: string, payload?: object, method: 'GET' | 'POST' = payload ? 'POST' : 'GET'): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${API_ROOT}${path}`, {
-      method: payload ? 'POST' : 'GET',
+      method,
       headers: {
         ...(payload ? {'Content-Type': 'application/json'} : {}),
         ...(token ? {Authorization: `Bearer ${token}`} : {}),
@@ -111,4 +118,16 @@ export function createBooking(token: string, input: {
 
 export function getMyTickets(token: string) {
   return request<MyTickets>('/my-tickets', token);
+}
+
+export async function getProfile(token: string) {
+  return (await request<{user: AuthUser}>('/profile', token)).user;
+}
+
+export function logout(token: string) {
+  return request<void>('/logout', token, undefined, 'POST');
+}
+
+export async function getBookingDetail(token: string, bookingId: number) {
+  return (await request<{booking: BookingDetail}>(`/bookings/${bookingId}`, token)).booking;
 }

@@ -37,6 +37,8 @@ export const styles = StyleSheet.create({
   cardDivider: {height: 1, backgroundColor: '#eeece8', marginVertical: 8},
   totalRow: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'},
   totalValue: {color: gold, fontSize: 16, fontWeight: '800'},
+  detailButton: {alignItems: 'center', backgroundColor: ink, borderRadius: 8, paddingVertical: 12, marginTop: 14},
+  detailButtonText: {color: '#fff', fontSize: 12, fontWeight: '700'},
   emptyCard: {alignItems: 'center', backgroundColor: '#fff', borderWidth: 1, borderColor: '#eeece8', borderRadius: 14, padding: 22, marginBottom: 24},
   emptyIcon: {color: '#c4b9a5', fontSize: 28, marginBottom: 8},
   emptyTitle: {color: ink, fontSize: 16, fontWeight: '800', marginBottom: 5},

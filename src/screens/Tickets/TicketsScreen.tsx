@@ -19,7 +19,7 @@ function TicketStatus({ticket}: {ticket: TicketBooking}) {
   return <Text style={[styles.statusBadge, paid ? styles.statusPaid : failed ? styles.statusFailed : styles.statusPending]}>{paid ? 'LUNAS' : failed ? 'PEMBAYARAN GAGAL' : 'MENUNGGU PEMBAYARAN'}</Text>;
 }
 
-export function TicketsScreen({token, onMakeReservation}: {token: string; onMakeReservation?: () => void}) {
+export function TicketsScreen({token, onMakeReservation, onOpenDetail}: {token: string; onMakeReservation?: () => void; onOpenDetail?: (bookingId: number) => void}) {
   const [data, setData] = useState<MyTickets | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -62,6 +62,7 @@ export function TicketsScreen({token, onMakeReservation}: {token: string; onMake
         <View style={styles.detailRow}><Text style={styles.detailLabel}>BARBER</Text><Text style={styles.detailValue}>{active.barber_name} · {active.chair_number ? `Kursi #${String(active.chair_number).padStart(2, '0')}` : 'Senopati'}</Text></View>
         <View style={styles.cardDivider} />
         <View style={styles.totalRow}><Text style={styles.detailLabel}>TOTAL</Text><Text style={styles.totalValue}>{rupiah(active.total_amount)}</Text></View>
+        {onOpenDetail ? <Pressable style={styles.detailButton} onPress={() => onOpenDetail(active.id)}><Text style={styles.detailButtonText}>Lihat Detail Reservasi  →</Text></Pressable> : null}
       </View> : <View style={styles.emptyCard}><Text style={styles.emptyIcon}>▤</Text><Text style={styles.emptyTitle}>Belum Ada Tiket Aktif</Text><Text style={styles.muted}>Reservasi mendatang Anda akan tampil di sini.</Text>{onMakeReservation ? <Pressable style={styles.reserveButton} onPress={onMakeReservation}><Text style={styles.reserveButtonText}>Buat Reservasi</Text></Pressable> : null}</View>}
 
       <View style={[styles.sectionHeading, styles.historyHeading]}><View><Text style={styles.sectionTitle}>Riwayat Kunjungan</Text><Text style={styles.historyDescription}>Arsip kunjungan dan transaksi Anda.</Text></View></View>

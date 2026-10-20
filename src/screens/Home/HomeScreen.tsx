@@ -5,11 +5,13 @@ import {HomeContent} from './HomeContent';
 import {ProfileScreen} from '../Profile/ProfileScreen';
 import {ReservationsScreen} from '../Reservations/ReservationsScreen';
 import {TicketsScreen} from '../Tickets/TicketsScreen';
+import {TicketDetailScreen} from '../Tickets/TicketDetailScreen';
 import {PaymentResultStatus, PaymentScreen} from '../Payment/PaymentScreen';
 import {AuthUser} from '../../services/auth';
 
 export function HomeScreen({onLogout, token, user}: {onLogout: () => void; token: string; user: AuthUser}) {
   const [activePage, setActivePage] = useState<PageName>('Beranda');
+  const [ticketDetailId, setTicketDetailId] = useState<number | null>(null);
   const [payment, setPayment] = useState<{url: string; ticketCode: string} | null>(null);
 
   // Saat user belum menyelesaikan pembayaran, tampilkan layar Payment penuh.
@@ -49,8 +51,10 @@ export function HomeScreen({onLogout, token, user}: {onLogout: () => void; token
             onPayment={(url, ticketCode) => setPayment({url, ticketCode})}
           />
         )}
-        {activePage === 'Tiket Saya' && <TicketsScreen token={token} onMakeReservation={() => setActivePage('Reservasi')} />}
-        {activePage === 'Profil' && <ProfileScreen onLogout={onLogout} />}
+        {activePage === 'Tiket Saya' && (ticketDetailId === null
+          ? <TicketsScreen token={token} onMakeReservation={() => setActivePage('Reservasi')} onOpenDetail={setTicketDetailId} />
+          : <TicketDetailScreen token={token} bookingId={ticketDetailId} onBack={() => setTicketDetailId(null)} />)}
+        {activePage === 'Profil' && <ProfileScreen token={token} user={user} onLogout={onLogout} />}
       </View>
       <BottomNavbar activePage={activePage} onPageChange={setActivePage} />
     </View>
