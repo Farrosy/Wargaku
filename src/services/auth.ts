@@ -6,10 +6,13 @@ type ApiResponse<T> = T & {message?: string; error?: string};
 export type AuthUser = {id: number; name: string; phone: string; email?: string | null; role: string};
 type LoginResponse = {user: AuthUser; access_token: string};
 
+// .env may contain either the server origin or an origin ending in /api.
+const API_ROOT = `${API_BASE_URL.replace(/\/+$/, '').replace(/\/api$/i, '')}/api`;
+
 async function post<T>(path: string, payload: object): Promise<ApiResponse<T>> {
   let response: Response;
   try {
-    response = await fetch(`${API_BASE_URL}${path}`, {
+    response = await fetch(`${API_ROOT}${path}`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(payload),
@@ -37,10 +40,38 @@ export type Service = {id: number; name: string; description?: string | null; pr
 export type Barber = {id: number; name: string; rating: number; available: boolean};
 export type BookingResult = {message: string; booking: {id: number; ticket_code: string; status: string; payment_redirect_url?: string; payment_status?: string}};
 
+export type TicketBooking = {
+  id: number;
+  ticket_code: string;
+  status: string;
+  booking_date: string;
+  booking_time: string;
+  chair_number: number;
+  notes: string;
+  service_name: string;
+  service_description?: string | null;
+  duration_minutes: number;
+  price: number;
+  total_amount: number;
+  barber_name: string;
+  barber_rating: number;
+  payment_method?: string | null;
+  payment_status?: string | null;
+  payment_redirect_url?: string | null;
+  payment_expires_at?: string | null;
+};
+
+export type MyTickets = {
+  user: AuthUser;
+  stats: {visits: number; favorite_barber: string};
+  active: TicketBooking | null;
+  history: TicketBooking[];
+};
+
 async function request<T>(path: string, token?: string, payload?: object): Promise<T> {
   let response: Response;
   try {
-    response = await fetch(`${API_BASE_URL}${path}`, {
+    response = await fetch(`${API_ROOT}${path}`, {
       method: payload ? 'POST' : 'GET',
       headers: {
         ...(payload ? {'Content-Type': 'application/json'} : {}),
@@ -76,4 +107,8 @@ export function createBooking(token: string, input: {
   booking_date: string; booking_time: string; notes: string;
 }) {
   return request<BookingResult>('/bookings', token, input);
+}
+
+export function getMyTickets(token: string) {
+  return request<MyTickets>('/my-tickets', token);
 }

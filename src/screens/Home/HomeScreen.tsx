@@ -49,7 +49,7 @@ export function HomeScreen({onLogout, token, user}: {onLogout: () => void; token
             onPayment={(url, ticketCode) => setPayment({url, ticketCode})}
           />
         )}
-        {activePage === 'Tiket Saya' && <TicketsScreen />}
+        {activePage === 'Tiket Saya' && <TicketsScreen token={token} onMakeReservation={() => setActivePage('Reservasi')} />}
         {activePage === 'Profil' && <ProfileScreen onLogout={onLogout} />}
       </View>
       <BottomNavbar activePage={activePage} onPageChange={setActivePage} />
