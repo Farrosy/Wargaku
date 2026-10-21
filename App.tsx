@@ -1,16 +1,26 @@
-import React, {useState} from 'react';
-import {StatusBar} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Alert, StatusBar} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {HomeScreen} from './src/screens/Home/HomeScreen';
 import {LoginScreen} from './src/screens/Auth/LoginScreen';
 import {RegisterScreen} from './src/screens/Auth/RegisterScreen';
-import {AuthUser} from './src/services/auth';
+import {AuthUser, setOnUnauthorized} from './src/services/auth';
 
 type Screen = 'login' | 'register' | 'home';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('login');
   const [session, setSession] = useState<{token: string; user: AuthUser} | null>(null);
+
+  // Saat token expired (server balas 401), akhiri sesi dan kembali ke login screen.
+  useEffect(() => {
+    setOnUnauthorized(() => {
+      setSession(null);
+      setScreen(current => (current === 'home' ? 'login' : current));
+      Alert.alert('Sesi berakhir', 'Sesi Anda telah berakhir. Silakan masuk kembali.');
+    });
+    return () => setOnUnauthorized(null);
+  }, []);
 
   return (
     <SafeAreaProvider>

@@ -3,6 +3,21 @@
 import {API_BASE_URL} from '@env';
 
 type ApiResponse<T> = T & {message?: string; error?: string};
+
+// Dilempar saat server menolak request karena token tidak valid/kedaluwarsa (HTTP 401).
+export class UnauthorizedError extends Error {
+  constructor() {
+    super('Sesi Anda telah berakhir. Silakan masuk kembali.');
+    this.name = 'UnauthorizedError';
+  }
+}
+
+// Callback global yang dipasang App agar bisa mengosongkan sesi dan kembali ke layar login.
+type UnauthorizedHandler = () => void;
+let onUnauthorized: UnauthorizedHandler | null = null;
+export function setOnUnauthorized(handler: UnauthorizedHandler | null) {
+  onUnauthorized = handler;
+}
 export type AuthUser = {id: number; name: string; phone: string; email?: string | null; role: string};
 type LoginResponse = {user: AuthUser; access_token: string};
 
@@ -91,6 +106,12 @@ async function request<T>(path: string, token?: string, payload?: object, method
   }
   const body = await response.json().catch(() => ({})) as T & {error?: string};
   if (!response.ok) {
+    // Token invalid/expired: beri tahu App agar mengakhiri sesi dan kembali ke login.
+    // Hanya relevan pada request dengan token; 401 di endpoint non-token (mis. login salah password) diperlakukan sebagai error biasa.
+    if (response.status === 401 && token) {
+      onUnauthorized?.();
+      throw new UnauthorizedError();
+    }
     throw new Error(body.error || 'Permintaan gagal. Silakan coba lagi.');
   }
   return body;
