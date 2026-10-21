@@ -27,13 +27,13 @@ export function HomeScreen({onLogout, token, user}: {onLogout: () => void; token
           }}
           onResult={(status: PaymentResultStatus) => {
             setPayment(null);
-            setActivePage('Tiket Saya');
-            const messages: Record<PaymentResultStatus, string> = {
-              success: 'Pembayaran berhasil dan tiket kamu sudah aktif.',
-              pending: 'Pembayaran masih diproses. Tiket akan aktif setelah lunas.',
-              failed: 'Pembayaran gagal. Kamu bisa coba reservasi ulang.',
-            };
-            Alert.alert('Status Pembayaran', messages[status]);
+            if (status === 'success') {
+              setActivePage('Tiket Saya');
+              Alert.alert('Status Pembayaran', 'Pembayaran berhasil dan tiket kamu sudah aktif.');
+              return;
+            }
+            setActivePage('Reservasi');
+            Alert.alert('Pembayaran Gagal', 'Transaksi tidak selesai. Silakan buat pesanan tiket kembali.');
           }}
         />
       </View>

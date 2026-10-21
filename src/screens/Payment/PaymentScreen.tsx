@@ -7,7 +7,7 @@ import {styles} from './style';
 // WebView menangkap redirect itu: blok navigasi ke URL tersebut, lalu tampilkan hasil di app.
 const FINISH_HOST = 'kelompok1-wad.onrender.com';
 
-export type PaymentResultStatus = 'success' | 'pending' | 'failed';
+export type PaymentResultStatus = 'success' | 'failed';
 
 function queryParam(url: string, key: string): string | null {
   const idx = url.indexOf('?');
@@ -20,14 +20,12 @@ function queryParam(url: string, key: string): string | null {
   return null;
 }
 
+// Hanya capture/settlement yang dianggap sukses. Sisanya (pending, expire,
+// cancel, deny, refund, atau parameter tak jelas) diperlakukan GAGAL.
 function statusFromUrl(url: string): PaymentResultStatus {
   const transaction = (queryParam(url, 'transaction_status') || '').toLowerCase();
   if (transaction === 'capture' || transaction === 'settlement') { return 'success'; }
-  if (transaction === 'pending') { return 'pending'; }
-  if (['expire', 'cancel', 'deny', 'refund', 'partial_refund', 'failure'].includes(transaction)) {
-    return 'failed';
-  }
-  return 'pending';
+  return 'failed';
 }
 
 function isFinishRedirect(url: string): boolean {
@@ -108,21 +106,19 @@ export function PaymentScreen({url, ticketCode, onDone, onResult}: {
         {result && (
           <View style={styles.overlay}>
             <Text style={result === 'success' ? styles.resultIconSuccess : styles.resultIconOther}>
-              {result === 'success' ? '✓' : result === 'pending' ? '◷' : '✕'}
+              {result === 'success' ? '✓' : '✕'}
             </Text>
             <Text style={styles.resultTitle}>
-              {result === 'success' ? 'Pembayaran Berhasil!' : result === 'pending' ? 'Pembayaran Menunggu' : 'Pembayaran Gagal'}
+              {result === 'success' ? 'Pembayaran Berhasil!' : 'Pembayaran Gagal'}
             </Text>
             <Text style={styles.overlayDesc}>
               {result === 'success'
                 ? 'Pembayaran kamu terkonfirmasi. Tiket kedatangan sudah aktif.'
-                : result === 'pending'
-                  ? 'Sistem masih memverifikasi transaksi kamu. Tiket akan aktif setelah lunas.'
-                  : 'Transaksi ditolak atau dibatalkan. Silakan coba reservasi lagi.'}
+                : 'Transaksi tidak selesai. Silakan buat pesanan tiket kembali.'}
             </Text>
             <TouchableOpacity style={styles.overlayButton} onPress={onDone} activeOpacity={0.85}>
               <Text style={styles.overlayButtonText}>
-                {result === 'success' ? 'Lihat Tiket Saya' : 'Kembali'}
+                {result === 'success' ? 'Lihat Tiket Saya' : 'Pesan Tiket Lagi'}
               </Text>
             </TouchableOpacity>
           </View>
