@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {ActivityIndicator, Pressable, ScrollView, Text, View} from 'react-native';
-import {getMyTickets, MyTickets, TicketBooking} from '../../services/auth';
+import {getMyTickets, getReviews, MyTickets, TicketBooking} from '../../services/auth';
+import {ReviewModal} from './ReviewModal';
 import {styles} from './style';
 
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MEI', 'JUN', 'JUL', 'AGU', 'SEP', 'OKT', 'NOV', 'DES'];
@@ -24,6 +25,27 @@ export function TicketsScreen({token, onMakeReservation, onOpenDetail}: {token: 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [year, setYear] = useState('SEMUA');
+
+  // Booking yang sudah pernah direview, agar tombol beri review tidak muncul dua kali.
+  const [reviewedIds, setReviewedIds] = useState<Set<number>>(new Set());
+  const [reviewBooking, setReviewBooking] = useState<TicketBooking | null>(null);
+
+  const refreshReviewed = useCallback((bookingId?: number) => {
+    // Optimis: booking yang baru direview langsung dianggap sudah direview agar badge berubah seketika.
+    if (bookingId) {
+      setReviewedIds(previous => {
+        const next = new Set(previous);
+        next.add(bookingId);
+        return next;
+      });
+    }
+    // Sinkronisasi dengan server (ambil daftar review terkini).
+    getReviews()
+      .then(list => setReviewedIds(new Set(list.map(item => item.booking_id))))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => { refreshReviewed(); }, [refreshReviewed]);
 
   const loadTickets = useCallback(() => {
     setLoading(true);
@@ -73,10 +95,18 @@ export function TicketsScreen({token, onMakeReservation, onOpenDetail}: {token: 
         const [, month, day] = item.booking_date.split('-').map(Number);
         return <View key={item.id} style={styles.historyCard}>
           <View style={styles.historyDate}><Text style={styles.historyMonth}>{MONTHS[month - 1]}</Text><Text style={styles.historyDay}>{String(day).padStart(2, '0')}</Text></View>
-          <View style={styles.historyInfo}><Text style={styles.historyService} numberOfLines={2}>{item.service_name}</Text><Text style={styles.historyMeta}>{item.barber_name} · {item.booking_time}</Text><Text style={[styles.historyStatus, item.payment_status === 'Gagal' && styles.failedText]}>{item.payment_status === 'Gagal' ? 'PEMBAYARAN GAGAL' : `SELESAI${item.payment_status === 'Lunas' ? ' · LUNAS' : ''}`}</Text></View>
+          <View style={styles.historyInfo}><Text style={styles.historyService} numberOfLines={2}>{item.service_name}</Text><Text style={styles.historyMeta}>{item.barber_name} · {item.booking_time}</Text><Text style={[styles.historyStatus, item.payment_status === 'Gagal' && styles.failedText]}>{item.payment_status === 'Gagal' ? 'PEMBAYARAN GAGAL' : `SELESAI${item.payment_status === 'Lunas' ? ' · LUNAS' : ''}`}</Text>
+            {/* Aksi review: hanya untuk kunjungan yang terbayar dan belum direview */}
+            {item.payment_status !== 'Gagal' && (reviewedIds.has(item.id)
+              ? <Text style={styles.reviewedBadge}>★  SUDAH DIREVIEW</Text>
+              : <Pressable accessibilityRole="button" style={styles.reviewMiniButton} onPress={() => setReviewBooking(item)}>
+                  <Text style={styles.reviewMiniText}>★  BERI REVIEW</Text>
+                </Pressable>)}
+          </View>
           <Text style={styles.historyPrice}>{rupiah(item.total_amount)}</Text>
         </View>;
       })}
+      <ReviewModal visible={!!reviewBooking} token={token} booking={reviewBooking} onClose={() => setReviewBooking(null)} onSubmitted={refreshReviewed} />
     </ScrollView>
   );
 }

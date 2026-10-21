@@ -63,6 +63,10 @@ export const styles = StyleSheet.create({
   historyStatus: {color: '#39704b', fontSize: 8, fontWeight: '800', marginTop: 5, letterSpacing: 0.4},
   failedText: {color: '#a12b22'},
   historyPrice: {color: ink, fontSize: 10, fontWeight: '800', textAlign: 'right', maxWidth: 80},
+  // Aksi review pada kartu riwayat kunjungan
+  reviewMiniButton: {alignSelf: 'flex-start', marginTop: 7, overflow: 'hidden', borderRadius: 20, paddingHorizontal: 9, paddingVertical: 5, backgroundColor: '#f2eadc'},
+  reviewMiniText: {color: gold, fontSize: 8, fontWeight: '800', letterSpacing: 0.4},
+  reviewedBadge: {alignSelf: 'flex-start', marginTop: 7, overflow: 'hidden', borderRadius: 20, paddingHorizontal: 9, paddingVertical: 5, backgroundColor: '#eaf4ec', color: '#39704b', fontSize: 8, fontWeight: '800', letterSpacing: 0.4},
   centered: {alignItems: 'center', paddingVertical: 28, gap: 9},
   errorCard: {backgroundColor: '#fae9e7', borderRadius: 10, padding: 12, marginBottom: 14, alignItems: 'center'},
   errorText: {color: '#a12b22', fontSize: 12, lineHeight: 18, textAlign: 'center'},

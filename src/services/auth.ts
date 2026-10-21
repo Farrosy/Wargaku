@@ -24,6 +24,11 @@ type LoginResponse = {user: AuthUser; access_token: string};
 // .env may contain either the server origin or an origin ending in /api.
 const API_ROOT = `${API_BASE_URL.replace(/\/+$/, '').replace(/\/api$/i, '')}/api`;
 
+// Dev aid: tampilkan alamat API yang benar-benar dipakai app di console Metro.
+if (__DEV__) {
+  console.log('[BarberOne] API_ROOT =', API_ROOT);
+}
+
 async function post<T>(path: string, payload: object): Promise<ApiResponse<T>> {
   let response: Response;
   try {
@@ -36,11 +41,22 @@ async function post<T>(path: string, payload: object): Promise<ApiResponse<T>> {
     throw new Error('Tidak dapat terhubung ke server. Pastikan backend berjalan dan alamat API dapat diakses.');
   }
 
-  const body = await response.json().catch(() => ({})) as ApiResponse<T>;
-  if (!response.ok) {
-    throw new Error(body.error || 'Permintaan gagal. Silakan coba lagi.');
+  let bodyText = '';
+  try {
+    bodyText = await response.text();
+  } catch {
+    bodyText = '';
   }
-  return body;
+  let body: ApiResponse<T> | Record<string, string> = {};
+  try {
+    body = bodyText ? (JSON.parse(bodyText) as ApiResponse<T>) : ({} as ApiResponse<T>);
+  } catch {
+    // Body bukan JSON (mis. "404 page not found") — biarkan bodyText tampil di pesan error.
+  }
+  if (!response.ok) {
+    throw new Error(body.error || `Permintaan gagal (HTTP ${response.status}).${bodyText ? ` Respons: ${bodyText.slice(0, 160)}` : ''}`);
+  }
+  return body as ApiResponse<T>;
 }
 
 export function login(identifier: string, password: string) {
@@ -104,7 +120,18 @@ async function request<T>(path: string, token?: string, payload?: object, method
   } catch {
     throw new Error('Tidak dapat terhubung ke server. Pastikan backend berjalan dan alamat API dapat diakses.');
   }
-  const body = await response.json().catch(() => ({})) as T & {error?: string};
+  let bodyText = '';
+  try {
+    bodyText = await response.text();
+  } catch {
+    bodyText = '';
+  }
+  let body: (T & {error?: string}) | Record<string, string> = {};
+  try {
+    body = bodyText ? (JSON.parse(bodyText) as T & {error?: string}) : ({} as T & {error?: string});
+  } catch {
+    // Body bukan JSON (mis. "404 page not found") — biarkan bodyText tampil di pesan error.
+  }
   if (!response.ok) {
     // Token invalid/expired: beri tahu App agar mengakhiri sesi dan kembali ke login.
     // Hanya relevan pada request dengan token; 401 di endpoint non-token (mis. login salah password) diperlakukan sebagai error biasa.
@@ -112,9 +139,9 @@ async function request<T>(path: string, token?: string, payload?: object, method
       onUnauthorized?.();
       throw new UnauthorizedError();
     }
-    throw new Error(body.error || 'Permintaan gagal. Silakan coba lagi.');
+    throw new Error(body.error || `Permintaan gagal (HTTP ${response.status}).${bodyText ? ` Respons: ${bodyText.slice(0, 160)}` : ''}`);
   }
-  return body;
+  return body as T & {error?: string};
 }
 
 export async function getServices() {
@@ -151,4 +178,23 @@ export function logout(token: string) {
 
 export async function getBookingDetail(token: string, bookingId: number) {
   return (await request<{booking: BookingDetail}>(`/bookings/${bookingId}`, token)).booking;
+}
+
+export type Review = {
+  id: number;
+  booking_id: number;
+  rating: number;
+  comment?: string | null;
+  customer_name: string;
+  barber_name: string;
+  service_name: string;
+  created_at: string;
+};
+
+export async function getReviews() {
+  return (await request<{reviews: Review[]}>('/reviews')).reviews;
+}
+
+export function createReview(token: string, input: {booking_id: number; rating: number; comment?: string}) {
+  return request<{message?: string}>('/reviews', token, input);
 }
