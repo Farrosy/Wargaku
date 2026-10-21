@@ -11,6 +11,7 @@ import {AuthUser} from '../../services/auth';
 
 export function HomeScreen({onLogout, token, user}: {onLogout: () => void; token: string; user: AuthUser}) {
   const [activePage, setActivePage] = useState<PageName>('Beranda');
+  const [selectedServiceId, setSelectedServiceId] = useState<number | undefined>();
   const [ticketDetailId, setTicketDetailId] = useState<number | null>(null);
   const [payment, setPayment] = useState<{url: string; ticketCode: string} | null>(null);
 
@@ -43,17 +44,18 @@ export function HomeScreen({onLogout, token, user}: {onLogout: () => void; token
   return (
     <View style={styles.page}>
       <View style={styles.content}>
-        {activePage === 'Beranda' && <HomeContent user={user} onNavigate={setActivePage} />}
+        {activePage === 'Beranda' && <HomeContent user={user} onNavigate={(page, serviceId) => { setSelectedServiceId(serviceId); setActivePage(page); }} />}
         {activePage === 'Reservasi' && (
           <ReservationsScreen
             token={token}
             user={user}
+            initialServiceId={selectedServiceId}
             onPayment={(url, ticketCode) => setPayment({url, ticketCode})}
           />
         )}
         {activePage === 'Tiket Saya' && (ticketDetailId === null
           ? <TicketsScreen token={token} onMakeReservation={() => setActivePage('Reservasi')} onOpenDetail={setTicketDetailId} />
-          : <TicketDetailScreen token={token} bookingId={ticketDetailId} onBack={() => setTicketDetailId(null)} />)}
+          : <TicketDetailScreen token={token} bookingId={ticketDetailId} onBack={() => setTicketDetailId(null)} onResumePayment={(url, ticketCode) => setPayment({url, ticketCode})} />)}
         {activePage === 'Profil' && <ProfileScreen token={token} user={user} onLogout={onLogout} />}
       </View>
       <BottomNavbar activePage={activePage} onPageChange={setActivePage} />

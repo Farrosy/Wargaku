@@ -15,7 +15,7 @@ function bookingStatus(booking: BookingDetail) {
   return 'Menunggu Pembayaran';
 }
 
-export function TicketDetailScreen({token, bookingId, onBack}: {token: string; bookingId: number; onBack: () => void}) {
+export function TicketDetailScreen({token, bookingId, onBack, onResumePayment}: {token: string; bookingId: number; onBack: () => void; onResumePayment?: (url: string, ticketCode: string) => void}) {
   const [booking, setBooking] = useState<BookingDetail | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -49,8 +49,9 @@ export function TicketDetailScreen({token, bookingId, onBack}: {token: string; b
       <View style={styles.panel}>
         <Text style={styles.panelTitle}>Status Pembayaran</Text>
         <View style={styles.totalRow}><Text style={styles.muted}>TOTAL</Text><Text style={styles.total}>{rupiah(booking.total_amount || booking.price)}</Text></View>
-        <Text style={styles.paymentMethod}>{booking.payment_status === 'Lunas' ? `✓  Dibayar via ${booking.payment_method || 'Midtrans'}` : `◷  ${booking.payment_status || 'Menunggu pembayaran'} · Midtrans`}</Text>
+        <Text style={[styles.paymentMethod, booking.payment_status === 'Menunggu' && styles.paymentPending]}>{booking.payment_status === 'Lunas' ? `✓  Dibayar via ${booking.payment_method || 'Midtrans'}` : `◷  ${booking.payment_status || 'Menunggu pembayaran'} · Midtrans`}</Text>
         {booking.payment_expires_at && booking.payment_status === 'Menunggu' ? <Text style={styles.expiry}>Sesi pembayaran berlaku hingga {new Date(booking.payment_expires_at).toLocaleString('id-ID')}</Text> : null}
+        {booking.payment_status === 'Menunggu' && booking.payment_redirect_url && onResumePayment ? <Pressable accessibilityRole="button" style={styles.paymentButton} onPress={() => onResumePayment(booking.payment_redirect_url!, booking.ticket_code)}><Text style={styles.paymentButtonText}>Lanjutkan Pembayaran →</Text></Pressable> : null}
       </View>
     </>}
   </ScrollView>;
