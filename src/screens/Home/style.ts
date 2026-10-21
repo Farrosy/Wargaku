@@ -105,19 +105,7 @@ export const styles = StyleSheet.create({
     marginBottom: 4,
   },
   heroTitle: {color: colors.onPrimary, fontSize: 18, fontWeight: '700', lineHeight: 24, marginBottom: 14},
-  heroFooter: {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'},
   heroMeta: {color: '#d5d5cf', fontSize: 12, flex: 1},
-  heroButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: colors.secondary,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  heroButtonText: {color: colors.onPrimary, fontSize: 13, fontWeight: '700'},
-  heroButtonArrow: {color: colors.onPrimary, fontSize: 14, fontWeight: '700'},
 
   // ---- Status Antrean Studio ----
   queueCard: {backgroundColor: colors.containerLow, borderRadius: 12, padding: 16, marginBottom: 24},
