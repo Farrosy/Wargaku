@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Alert, KeyboardAvoidingView, Linking, Platform, ScrollView, Text, View} from 'react-native';
+import {Alert, KeyboardAvoidingView, Platform, ScrollView, Text, View} from 'react-native';
 import {AuthInput} from '../../components/AuthInput/AuthInput';
 import {PrimaryButton} from '../../components/PrimaryButton/PrimaryButton';
 import {styles} from './style';
@@ -20,13 +20,6 @@ export function LoginScreen({onLogin, onRegister}: Props) {
     setLoading(true);
     try {
       const result = await login(email.trim(), password);
-      if (result.user.role !== 'user') {
-        Alert.alert('Akses melalui web', 'Akun kasir hanya dapat digunakan melalui web.', [
-          {text: 'Nanti', style: 'cancel'},
-          {text: 'Buka web', onPress: () => { void Linking.openURL('https://google.com').catch(() => Alert.alert('Gagal membuka tautan', 'Silakan buka https://google.com secara manual.')); }},
-        ]);
-        return;
-      }
       onLogin(result.access_token, result.user);
     } catch (error) {
       Alert.alert('Login gagal', error instanceof Error ? error.message : 'Terjadi kesalahan. Silakan coba lagi.');

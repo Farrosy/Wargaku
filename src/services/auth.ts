@@ -106,7 +106,7 @@ export type BookingDetail = TicketBooking & {
   barber_id: number;
 };
 
-async function request<T>(path: string, token?: string, payload?: object, method: 'GET' | 'POST' = payload ? 'POST' : 'GET'): Promise<T> {
+async function request<T>(path: string, token?: string, payload?: object, method: 'GET' | 'POST' | 'PATCH' = payload ? 'POST' : 'GET'): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${API_ROOT}${path}`, {
@@ -142,6 +142,10 @@ async function request<T>(path: string, token?: string, payload?: object, method
     throw new Error(body.error || `Permintaan gagal (HTTP ${response.status}).${bodyText ? ` Respons: ${bodyText.slice(0, 160)}` : ''}`);
   }
   return body as T & {error?: string};
+}
+
+export function cashierRequest<T>(path: string, token: string, payload?: object, method: 'GET' | 'POST' | 'PATCH' = payload ? 'POST' : 'GET') {
+  return request<T>(path, token, payload, method);
 }
 
 export async function getServices() {
