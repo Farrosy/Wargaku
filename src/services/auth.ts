@@ -106,7 +106,7 @@ export type BookingDetail = TicketBooking & {
   barber_id: number;
 };
 
-async function request<T>(path: string, token?: string, payload?: object, method: 'GET' | 'POST' = payload ? 'POST' : 'GET'): Promise<T> {
+async function request<T>(path: string, token?: string, payload?: object, method: 'GET' | 'POST' | 'PATCH' = payload ? 'POST' : 'GET'): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${API_ROOT}${path}`, {
@@ -144,6 +144,10 @@ async function request<T>(path: string, token?: string, payload?: object, method
   return body as T & {error?: string};
 }
 
+export function cashierRequest<T>(path: string, token: string, payload?: object, method: 'GET' | 'POST' | 'PATCH' = payload ? 'POST' : 'GET') {
+  return request<T>(path, token, payload, method);
+}
+
 export async function getServices() {
   return (await request<{services: Service[]}>('/services')).services;
 }
@@ -178,6 +182,10 @@ export function logout(token: string) {
 
 export async function getBookingDetail(token: string, bookingId: number) {
   return (await request<{booking: BookingDetail}>(`/bookings/${bookingId}`, token)).booking;
+}
+
+export async function createBookingPayment(token: string, bookingId: number) {
+  return (await request<{payment_redirect_url: string}>(`/bookings/${bookingId}/payment`, token, {}, 'POST')).payment_redirect_url;
 }
 
 export type Review = {

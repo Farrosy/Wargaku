@@ -11,8 +11,10 @@ import {AuthUser} from '../../services/auth';
 
 export function HomeScreen({onLogout, token, user}: {onLogout: () => void; token: string; user: AuthUser}) {
   const [activePage, setActivePage] = useState<PageName>('Beranda');
+  const [selectedServiceId, setSelectedServiceId] = useState<number | undefined>();
   const [ticketDetailId, setTicketDetailId] = useState<number | null>(null);
   const [payment, setPayment] = useState<{url: string; ticketCode: string} | null>(null);
+  const [paymentReturnPage, setPaymentReturnPage] = useState<PageName>('Reservasi');
 
   // Saat user belum menyelesaikan pembayaran, tampilkan layar Payment penuh.
   if (payment) {
@@ -23,7 +25,7 @@ export function HomeScreen({onLogout, token, user}: {onLogout: () => void; token
           ticketCode={payment.ticketCode}
           onDone={() => {
             setPayment(null);
-            setActivePage('Reservasi');
+            setActivePage(paymentReturnPage);
           }}
           onResult={(status: PaymentResultStatus) => {
             setPayment(null);
@@ -32,8 +34,8 @@ export function HomeScreen({onLogout, token, user}: {onLogout: () => void; token
               Alert.alert('Status Pembayaran', 'Pembayaran berhasil dan tiket kamu sudah aktif.');
               return;
             }
-            setActivePage('Reservasi');
-            Alert.alert('Pembayaran Gagal', 'Transaksi tidak selesai. Silakan buat pesanan tiket kembali.');
+            setActivePage(paymentReturnPage);
+            Alert.alert('Pembayaran Belum Selesai', 'Kamu bisa melanjutkan pembayaran dari detail tiket.');
           }}
         />
       </View>
@@ -43,17 +45,18 @@ export function HomeScreen({onLogout, token, user}: {onLogout: () => void; token
   return (
     <View style={styles.page}>
       <View style={styles.content}>
-        {activePage === 'Beranda' && <HomeContent user={user} onNavigate={setActivePage} />}
+        {activePage === 'Beranda' && <HomeContent user={user} onNavigate={(page, serviceId) => { setSelectedServiceId(serviceId); setActivePage(page); }} />}
         {activePage === 'Reservasi' && (
           <ReservationsScreen
             token={token}
             user={user}
-            onPayment={(url, ticketCode) => setPayment({url, ticketCode})}
+            initialServiceId={selectedServiceId}
+            onPayment={(url, ticketCode) => { setPaymentReturnPage('Reservasi'); setPayment({url, ticketCode}); }}
           />
         )}
         {activePage === 'Tiket Saya' && (ticketDetailId === null
           ? <TicketsScreen token={token} onMakeReservation={() => setActivePage('Reservasi')} onOpenDetail={setTicketDetailId} />
-          : <TicketDetailScreen token={token} bookingId={ticketDetailId} onBack={() => setTicketDetailId(null)} />)}
+          : <TicketDetailScreen token={token} bookingId={ticketDetailId} onBack={() => setTicketDetailId(null)} onResumePayment={(url, ticketCode) => { setPaymentReturnPage('Tiket Saya'); setPayment({url, ticketCode}); }} />)}
         {activePage === 'Profil' && <ProfileScreen token={token} user={user} onLogout={onLogout} />}
       </View>
       <BottomNavbar activePage={activePage} onPageChange={setActivePage} />

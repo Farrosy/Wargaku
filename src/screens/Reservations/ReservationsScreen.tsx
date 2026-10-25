@@ -28,7 +28,7 @@ function makeDateOptions(): BookingDateOption[] {
   });
 }
 
-export function ReservationsScreen({token, user, onPayment}: {token: string; user: AuthUser; onPayment?: (url: string, ticketCode: string) => void}) {
+export function ReservationsScreen({token, user, initialServiceId, onPayment}: {token: string; user: AuthUser; initialServiceId?: number; onPayment?: (url: string, ticketCode: string) => void}) {
   const dates = useMemo(makeDateOptions, []);
   const [services, setServices] = useState<Service[]>([]);
   const [barbers, setBarbers] = useState<Barber[]>([]);
@@ -51,13 +51,13 @@ export function ReservationsScreen({token, user, onPayment}: {token: string; use
         setError('');
         setServices(serviceList);
         setBarbers(barberList);
-        setServiceId(serviceList[0]?.id);
+        setServiceId(serviceList.find(item => item.id === initialServiceId)?.id ?? serviceList[0]?.id);
         setBarberId(barberList.find(item => item.available)?.id);
       })
       .catch(err => { if (active) { setError(err instanceof Error ? err.message : 'Gagal memuat data reservasi.'); } })
       .finally(() => { if (active) { setLoadingData(false); } });
     return () => { active = false; };
-  }, []);
+  }, [initialServiceId]);
 
   useEffect(() => {
     if (!serviceId || !barberId || !date) { setSlots([]); setTime(''); return; }

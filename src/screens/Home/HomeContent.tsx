@@ -37,7 +37,7 @@ function greeting(date: Date) {
 
 type Props = {
   user: AuthUser;
-  onNavigate: (page: 'Reservasi') => void;
+  onNavigate: (page: 'Reservasi', serviceId: number) => void;
 };
 
 // Konten tab "Beranda": data layanan & barber diambil langsung dari backend.
@@ -77,7 +77,7 @@ export function HomeContent({user, onNavigate}: Props) {
     category === 'Semua' ? services : services.filter(item => categorize(item) === category)
   ), [services, category]);
 
-  const goReserve = React.useCallback(() => onNavigate('Reservasi'), [onNavigate]);
+  const goReserve = React.useCallback((serviceId: number) => onNavigate('Reservasi', serviceId), [onNavigate]);
   const firstName = user.name.trim().split(' ')[0] || 'Tamu';
 
   return (
@@ -130,7 +130,7 @@ export function HomeContent({user, onNavigate}: Props) {
                 key={service.id}
                 service={service}
                 featured={index === 0 && category === 'Semua'}
-                onPick={goReserve}
+                onPick={() => goReserve(service.id)}
               />
             ))
           )}
