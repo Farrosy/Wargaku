@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Alert, Linking, Pressable, ScrollView, Text, TextInput, View} from 'react-native';
+import {ActivityIndicator, Alert, Linking, Pressable, ScrollView, Text, TextInput, View} from 'react-native';
 import {AuthUser, Barber, cashierRequest, Service} from '../../services/auth';
 import {styles} from './style';
 
@@ -21,6 +21,8 @@ export function CashierScreen({token, user, onLogout}: {token: string; user: Aut
   const [services, setServices] = useState<Service[]>([]);
   const [barbers, setBarbers] = useState<Barber[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [error, setError] = useState('');
   const [busyId, setBusyId] = useState<number | null>(null);
   const [filter, setFilter] = useState('all');
@@ -41,9 +43,18 @@ export function CashierScreen({token, user, onLogout}: {token: string; user: Aut
       setSummary(s.summary || s);
       setQueue(q.queue || []);
       setError('');
+      setLastUpdated(new Date());
     } catch (e) { setError(e instanceof Error ? e.message : 'Gagal memuat dashboard kasir.'); }
     finally { setLoading(false); }
   }, [token]);
+
+  // Refresh manual: tampilkan status memuat di tombol dan cegah tap ganda.
+  const refresh = useCallback(async () => {
+    if (refreshing) { return; }
+    setRefreshing(true);
+    await loadDashboard();
+    setRefreshing(false);
+  }, [loadDashboard, refreshing]);
 
   useEffect(() => {
     void loadDashboard();
@@ -109,7 +120,7 @@ export function CashierScreen({token, user, onLogout}: {token: string; user: Aut
 
   return <View style={styles.page}>
     <View style={styles.topbar}><View><Text style={styles.brand}>BARBER ONE · KASIR</Text><Text style={styles.welcome}>Selamat bertugas, {user.name}</Text></View>
-      <View style={styles.topActions}><Pressable style={styles.refresh} onPress={() => { setLoading(true); void loadDashboard(); }}><Text style={styles.refreshText}>↻  Refresh</Text></Pressable><Pressable onPress={onLogout}><Text style={styles.logout}>Keluar</Text></Pressable></View>
+      <View style={styles.topActions}>{lastUpdated ? <Text style={styles.muted}>Diperbarui {lastUpdated.toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit', second: '2-digit'})}</Text> : null}<Pressable accessibilityRole="button" disabled={refreshing} style={({pressed}) => [styles.refresh, (pressed || refreshing) && {opacity: 0.6}]} onPress={() => { void refresh(); }}>{refreshing ? <ActivityIndicator size="small" color="#403a32" /> : <Text style={styles.refreshText}>↻  Refresh</Text>}</Pressable><Pressable onPress={onLogout}><Text style={styles.logout}>Keluar</Text></Pressable></View>
     </View>
     <ScrollView contentContainerStyle={styles.content}>
       {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -152,7 +163,7 @@ function QueueCard({item, busy, onAction, onReminder}: {item: QueueItem; busy: b
   const startedAt = item.started_at ? new Date(item.started_at).getTime() : 0;
   const mins = (limit: number) => Math.max(0, Math.ceil((startedAt + limit * 60000 - Date.now()) / 60000));
   const timeOk = Date.now() >= new Date(`${item.booking_date}T${item.booking_time}:00+07:00`).getTime();
-  const canStart = type === 'waiting' && item.status === 'Dikonfirmasi' && item.payment_status === 'Lunas' && timeOk;
+  const canStart = type === 'waiting' && (item.status === 'Dikonfirmasi' || item.status === 'Menunggu') && item.payment_status === 'Lunas' && timeOk;
   const finishWait = mins(30); const cancelWait = mins(10);
   return <View style={[styles.ticket, type === 'ongoing' && styles.ticketOngoing]}>
     <View style={styles.ticketHeader}><Text style={styles.ticketCode}>#{item.ticket_code}</Text><Text style={styles.badge}>{type === 'ongoing' ? `KURSI ${String(item.chair_number || 0).padStart(2, '0')} · DILAYANI` : type === 'done' ? 'SELESAI & LUNAS' : 'MENUNGGU JADWAL'}</Text><Text style={styles.muted}>{item.is_walk_in ? 'Walk-in' : 'Booking web'}</Text></View>
