@@ -184,6 +184,10 @@ export async function getBookingDetail(token: string, bookingId: number) {
   return (await request<{booking: BookingDetail}>(`/bookings/${bookingId}`, token)).booking;
 }
 
+export async function createBookingPayment(token: string, bookingId: number) {
+  return (await request<{payment_redirect_url: string}>(`/bookings/${bookingId}/payment`, token, {}, 'POST')).payment_redirect_url;
+}
+
 export type Review = {
   id: number;
   booking_id: number;

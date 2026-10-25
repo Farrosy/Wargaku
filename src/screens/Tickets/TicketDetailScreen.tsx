@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Pressable, ScrollView, Text, View} from 'react-native';
-import {BookingDetail, getBookingDetail} from '../../services/auth';
+import {BookingDetail, createBookingPayment, getBookingDetail} from '../../services/auth';
 import {detailStyles as styles} from './detailStyle';
 
 function rupiah(amount: number) {
@@ -19,6 +19,22 @@ export function TicketDetailScreen({token, bookingId, onBack, onResumePayment}: 
   const [booking, setBooking] = useState<BookingDetail | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [startingPayment, setStartingPayment] = useState(false);
+
+  const resumePayment = async () => {
+    if (!booking || startingPayment || !onResumePayment) { return; }
+    setStartingPayment(true);
+    setError('');
+    try {
+      const url = await createBookingPayment(token, booking.id);
+      if (!url) { throw new Error('URL pembayaran tidak tersedia. Silakan coba lagi.'); }
+      onResumePayment(url, booking.ticket_code);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Gagal membuka pembayaran.');
+    } finally {
+      setStartingPayment(false);
+    }
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -51,7 +67,7 @@ export function TicketDetailScreen({token, bookingId, onBack, onResumePayment}: 
         <View style={styles.totalRow}><Text style={styles.muted}>TOTAL</Text><Text style={styles.total}>{rupiah(booking.total_amount || booking.price)}</Text></View>
         <Text style={[styles.paymentMethod, booking.payment_status === 'Menunggu' && styles.paymentPending]}>{booking.payment_status === 'Lunas' ? `✓  Dibayar via ${booking.payment_method || 'Midtrans'}` : `◷  ${booking.payment_status || 'Menunggu pembayaran'} · Midtrans`}</Text>
         {booking.payment_expires_at && booking.payment_status === 'Menunggu' ? <Text style={styles.expiry}>Sesi pembayaran berlaku hingga {new Date(booking.payment_expires_at).toLocaleString('id-ID')}</Text> : null}
-        {booking.payment_status === 'Menunggu' && booking.payment_redirect_url && onResumePayment ? <Pressable accessibilityRole="button" style={styles.paymentButton} onPress={() => onResumePayment(booking.payment_redirect_url!, booking.ticket_code)}><Text style={styles.paymentButtonText}>Lanjutkan Pembayaran →</Text></Pressable> : null}
+        {booking.payment_status !== 'Lunas' && booking.status !== 'Batal' && onResumePayment ? <Pressable accessibilityRole="button" disabled={startingPayment} style={[styles.paymentButton, startingPayment && {opacity: 0.6}]} onPress={resumePayment}><Text style={styles.paymentButtonText}>{startingPayment ? 'Menyiapkan pembayaran…' : 'Lanjutkan Pembayaran →'}</Text></Pressable> : null}
       </View>
     </>}
   </ScrollView>;
